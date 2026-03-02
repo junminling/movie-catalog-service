@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: Movie Catalog Service API
+  description: API for managing movie catalog items
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /catalog/{userId}:
+    get:
+      summary: Get all catalog items for a user
+      operationId: getAllCatalogItems
+      tags:
+        - catalog
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID to get catalog items for
+      responses:
+        '200':
+          description: List of all catalog items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogItem'
+
+    post:
+      summary: Create a new catalog item
+      operationId: createCatalogItem
+      tags:
+        - catalog
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItem'
+      responses:
+        '200':
+          description: Created catalog item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItem'
+
+  /catalog/{userId}/{id}:
+    get:
+      summary: Get catalog item by ID
+      operationId: getCatalogItemById
+      tags:
+        - catalog
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Catalog item found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItem'
+        '404':
+          description: Catalog item not found
+
+    put:
+      summary: Update a catalog item
+      operationId: updateCatalogItem
+      tags:
+        - catalog
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItem'
+      responses:
+        '200':
+          description: Updated catalog item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItem'
+        '404':
+          description: Catalog item not found
+
+    delete:
+      summary: Delete a catalog item
+      operationId: deleteCatalogItem
+      tags:
+        - catalog
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Catalog item deleted
+        '404':
+          description: Catalog item not found
+
+components:
+  schemas:
+    CatalogItem:
+      type: object
+      required:
+        - name
+        - rating
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the catalog item
+        name:
+          type: string
+          description: Name of the catalog item
+          example: "Inception"
+        desc:
+          type: string
+          description: Description of the catalog item
+          example: "A mind-bending thriller about dreams"
+        rating:
+          type: integer
+          format: int32
+          description: Rating of the catalog item
+          minimum: 1
+          maximum: 10
+          example: 9
